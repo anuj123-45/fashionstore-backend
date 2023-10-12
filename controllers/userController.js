@@ -72,41 +72,40 @@ exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
 
   if (!user) {
-    return next(new ErrorHander("User not found", 404));
+    return next(new ErrorHandler("User Not Found ", 404));
   }
 
-  // Get ResetPassword Token
+  //Get ResetPassword Token
   const resetToken = user.getResetPasswordToken();
 
   await user.save({ validateBeforeSave: false });
+  
+  const resetPasswordUrl = `${req.protocol}://${req.get("host")}/password/reset/${resetToken}`;
 
-  const resetPasswordUrl = `${req.protocol}://${req.get(
-    "host"
-  )}/password/reset/${resetToken}`;
-
-  const message = `Your password reset token is :- \n\n ${resetPasswordUrl} \n\nIf you have not requested this email then, please ignore it.`;
+  const message = `Your password temp reset token is :- \n\n ${resetPasswordUrl} \n\n If you have not
+ requested this email then,Please ignore it `;
 
   try {
     await sendEmail({
       email: user.email,
-      subject: `Ecommerce Password Recovery`,
-      message:message,
-
+      subject: `Fashion Finesse Password Recovery`,
+      message,
     });
 
     res.status(200).json({
       success: true,
-      message: `Email sent to ${user.email} successfully`,
+      message: `Email sent to user successfully `,
     });
-  } catch (error) {
+  } catch (err) {
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
 
     await user.save({ validateBeforeSave: false });
 
-    return next(new ErrorHander(error.message, 500));
+    return next(new ErrorHandler(err.message, 500));
   }
 });
+
 
 // Reset Password
 exports.resetPassword = catchAsyncErrors(async (req, res, next) => {
