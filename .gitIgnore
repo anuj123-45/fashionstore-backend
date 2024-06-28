@@ -1,4 +1,4 @@
-.config
+
 # dependencies
 /node_modules
 /frontend/node_modules
@@ -18,6 +18,8 @@
 /frontend/.env.development.local
 /frontend/.env.test.local
 /frontend/.env.production.local
+
+.config.env
 
 npm-debug.log*
 yarn-debug.log*
